@@ -4,7 +4,7 @@
 #include <DHT.h>
 #include "arduino_secrets.h"
 
-#define DHT_SENSOR_PIN  21 // ESP32 pin GIOP21 connected to DHT11 sensor
+#define DHT_SENSOR_PIN  21 
 #define DHT_SENSOR_TYPE DHT11
 
 DHT dht_sensor(DHT_SENSOR_PIN, DHT_SENSOR_TYPE);
@@ -14,6 +14,7 @@ const char password[] = SECRET_WIFIPASS;
 const char mqtt_server[] = SECRET_MQTTSERVER;
 const char mqtt_user[] = SECRET_MQTTUSER;
 const char mqtt_password[] = SECRET_MQTTPASS;
+const int ledPin = 18;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -30,7 +31,8 @@ void setup() {
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-  dht_sensor.begin(); 
+  dht_sensor.begin();
+  pinMode(ledPin, OUTPUT); 
 }
 
 void setup_wifi() {
@@ -69,7 +71,7 @@ void callback(char* topic, byte* message, unsigned int length) {
 
   // If a message is received on the topic esp32/output, you check if the message is either "on" or "off". 
   // Changes the output state according to the message
-  /*if (String(topic) == "esp32/output") {
+  if (String(topic) == "esp32/output") {
     Serial.print("Changing output to ");
     if(messageTemp == "on"){
       Serial.println("on");
@@ -79,7 +81,7 @@ void callback(char* topic, byte* message, unsigned int length) {
       Serial.println("off");
       digitalWrite(ledPin, LOW);
     }
-  }*/
+  }
 }
 
 void reconnect() {
